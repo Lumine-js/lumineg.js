@@ -1,7 +1,7 @@
 {
   "name":"lumineg.js",
   "author":"Kanaka Nakazawa",
-  "version":"v1.0.0-experimental",
+  "version":"v1.22.8.6.1920",
   "dependencies":{
     "ws": "^8.5.0",
     "axios": "^0.25.0"
