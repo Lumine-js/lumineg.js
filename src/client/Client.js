@@ -29,7 +29,7 @@ class Client extends EventEmitter {
   }
 
   startWebsocket() {
-    let wssurl = 'wss://api.guilded.gg/v1/websocket'
+    let wssurl = 'wss://www.guilded.gg/websocket/v1'
 
     this.ws = new WebSocket(wssurl, {
       headers: {
@@ -52,6 +52,8 @@ class Client extends EventEmitter {
 
     this.ws.onmessage = ({ data }) => {
       let packet = JSON.parse(data)
+      
+      
       switch (packet.op) {
         case OPCodes.WELLCOME:
           this.emit("ready", new UserClient(packet.d, this))
@@ -63,8 +65,8 @@ class Client extends EventEmitter {
           break;
       }
       
-      console.log(packet)
-      
+      if(!packet?.t) return;
+      this.emit('rawEvent', {t: packet.t, d: packet.d})
       switch(packet.t) {
         case "ChatMessageCreated":
           this.emit("messageCreate", new Message(packet.d, this))
@@ -94,6 +96,8 @@ class Client extends EventEmitter {
   }
   
   sendMessage(channelId, data) {
+    if(!channelId) return new TypeError("Uknown Channel Id")
+    if((!data?.content) || (!data?.embeds)) return new TypeError("Cannot Send Empty Message")
     this.requestAPI("POST", Constants.ENDPOINTS.MESSAGE(channelId), data)
   }
 }
